@@ -74,9 +74,108 @@ sendEmail.addEventListener('click', function (e) {
     return;
   }
 
-  let body = 'name: ' + name + '<br/> email: ' + email + '<br/> number: ' + number + '<br/> message: ' + messageInput;
+  // To send real emails, we are using the Web3Forms API.
+  // 1. Visit https://web3forms.com/
+  // 2. Enter your Gmail address to get an Access Key via email.
+  // 3. Replace "YOUR_ACCESS_KEY_HERE" below with your actual Access Key.
+  let formData = {
+    access_key: "0bf87798-a45b-4668-9757-2979130d4ce2",
+    subject: "New Contact Form Submission from " + name,
+    from_name: "Iron Edge Fitness Contact Form",
+    name: name,
+    email: email,
+    phone_number: number,
+    message: messageInput
+  };
 
-  showPopup("Message sent successfully!");
+  const originalBtnText = sendEmail.innerText;
+  sendEmail.innerText = "Sending...";
+
+  fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify(formData)
+  })
+    .then(async (response) => {
+      let json = await response.json();
+      if (response.status == 200) {
+        showPopup("Message sent successfully!");
+
+        // --- CUSTOM AUTORESPONDER (SENDING DISCOUNT CODE) ---
+        // Because Web3Forms prevents sending unstructured emails to visitors for spam reasons,
+        // we use EmailJS to email the visitor back automatically.
+        // 1. Sign up for free at https://www.emailjs.com/
+        // 2. Add an Email Service & create an Auto-Reply Email Template.
+        // 3. Put your Public Key, Service ID, and Template ID below.
+        try {
+          emailjs.init("RsVg9wFvnAniYocAM"); // e.g. "user_xxxxxxxxxxx"
+
+          const autoReplyMsg = `Dear Fitness Enthusiast,
+
+Are you ready to push past your limits and transform your body like never before?
+
+Welcome to Iron Edge Gym — where ordinary people become stronger, fitter, faster, and more confident every single day. Whether your goal is muscle gain, fat loss, strength, boxing fitness, or simply building a powerful physique, this is where your transformation begins.
+
+💥 EXCLUSIVE LIMITED-TIME OFFER 💥
+
+Join now and get access to:
+
+✅ Special Discounted Membership Plans
+✅ Free Beginner Fitness Guidance
+✅ Access to High-Quality Equipment
+✅ Motivating & Energetic Gym Environment
+✅ Expert Workout Support
+✅ A Community That Pushes You to Become Better Every Day
+
+At Iron Edge Gym, we believe fitness is not just about lifting weights — it’s about building discipline, confidence, and a mindset that separates you from the crowd.
+
+⚡ Don’t wait for “someday.”
+The best transformations start with one decision — starting NOW.
+
+This special offer won’t last long, and memberships are filling quickly.
+
+📍 Location: Phagwara
+📞 Contact: 6282535131
+
+Reply to this email or contact us today to reserve your spot and begin your fitness journey with Iron Edge Gym.
+
+See you at the gym.
+
+Best Regards,
+Iron Edge Gym
+Phagwara
+6282535131`;
+
+          emailjs.send("service_xfbc49f", "template_xutpuwh", {
+            to_email: email,
+            to_name: name,
+            custom_message: autoReplyMsg
+          });
+          console.log("Auto-responder discount email triggered to " + email);
+        } catch (e) {
+          console.error("EmailJS auto-reply error: ", e);
+        }
+        // ----------------------------------------------------
+
+        // Reset form fields
+        document.getElementById('name').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('number').value = '';
+        document.getElementById('message').value = '';
+      } else {
+        showPopup(json.message || "Something went wrong!", true);
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      showPopup("Oops! Something went wrong while sending the email.", true);
+    })
+    .finally(() => {
+      sendEmail.innerText = originalBtnText;
+    });
 });
 
 function showPopup(msg, isError = false) {
