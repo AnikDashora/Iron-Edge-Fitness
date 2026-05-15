@@ -113,46 +113,8 @@ sendEmail.addEventListener('click', function (e) {
         try {
           emailjs.init("RsVg9wFvnAniYocAM"); // e.g. "user_xxxxxxxxxxx"
 
-          const autoReplyMsg = `Dear Fitness Enthusiast,
-
-Are you ready to push past your limits and transform your body like never before?
-
-Welcome to Iron Edge Gym — where ordinary people become stronger, fitter, faster, and more confident every single day. Whether your goal is muscle gain, fat loss, strength, boxing fitness, or simply building a powerful physique, this is where your transformation begins.
-
-💥 EXCLUSIVE LIMITED-TIME OFFER 💥
-
-Join now and get access to:
-
-✅ Special Discounted Membership Plans
-✅ Free Beginner Fitness Guidance
-✅ Access to High-Quality Equipment
-✅ Motivating & Energetic Gym Environment
-✅ Expert Workout Support
-✅ A Community That Pushes You to Become Better Every Day
-
-At Iron Edge Gym, we believe fitness is not just about lifting weights — it’s about building discipline, confidence, and a mindset that separates you from the crowd.
-
-⚡ Don’t wait for “someday.”
-The best transformations start with one decision — starting NOW.
-
-This special offer won’t last long, and memberships are filling quickly.
-
-📍 Location: Phagwara
-📞 Contact: 6282535131
-
-Reply to this email or contact us today to reserve your spot and begin your fitness journey with Iron Edge Gym.
-
-See you at the gym.
-
-Best Regards,
-Iron Edge Gym
-Phagwara
-6282535131`;
-
           emailjs.send("service_xfbc49f", "template_xutpuwh", {
-            to_email: email,
-            to_name: name,
-            custom_message: autoReplyMsg
+            to_email: email
           });
           console.log("Auto-responder discount email triggered to " + email);
         } catch (e) {
